@@ -12,13 +12,15 @@ type Game struct {
 }
 
 type Player struct {
-	Name   string
-	Potion []Ingredient
-	Bag    []Ingredient
-	Buys   [][]Ingredient
-	Score  int
-	Rubies int
-	Flask  bool
+	Name        string
+	Potion      []Ingredient
+	Bag         []Ingredient
+	Buys        [][]Ingredient
+	Score       int
+	Rubies      int
+	PotionLevel int
+	RatTails    int
+	Flask       bool
 }
 
 type Potion struct {

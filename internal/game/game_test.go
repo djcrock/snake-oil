@@ -83,20 +83,22 @@ func TestGame_Start(t *testing.T) {
 	}
 }
 
-func TestGame_GetRatTails(t *testing.T) {
-	g := Game{Phase: PhaseBrew, Round: 1, Players: []Player{
-		{Score: 40},
-		{Score: 4},
-	}}
+func TestGame_StartNormalBrew(t *testing.T) {
+	t.Run("rat tails are updated", func(t *testing.T) {
+		g := Game{Phase: PhaseLobby, Round: 1, Players: []Player{
+			{Score: 40},
+			{Score: 4},
+		}}
 
-	ratTails := g.GetRatTails()
-	if len(ratTails) != 2 {
-		t.Fatalf("expected 2 ratTails, got %v", len(ratTails))
-	}
-	if ratTails[0] != 0 {
-		t.Fatalf("expected 0 ratTails for player 1, got %v", ratTails[0])
-	}
-	if ratTails[1] != 17 {
-		t.Fatalf("expected 17 ratTails for player 2, got %v", ratTails[1])
-	}
+		err := g.StartNormalBrew()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if g.Players[0].RatTails != 0 {
+			t.Fatalf("expected 0 ratTails for player 1, got %v", g.Players[0].RatTails)
+		}
+		if g.Players[1].RatTails != 17 {
+			t.Fatalf("expected 17 ratTails for player 2, got %v", g.Players[1].RatTails)
+		}
+	})
 }

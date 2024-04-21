@@ -140,6 +140,7 @@ func (g *Game) Start() error {
 
 func (g *Game) StartNormalBrew() error {
 	g.Phase = PhaseBrew
+	g.updateRatTails()
 	for i := range g.Players {
 		g.Players[i].Bag = nil
 		for _, buys := range g.Players[i].Buys {
@@ -150,8 +151,7 @@ func (g *Game) StartNormalBrew() error {
 	return nil
 }
 
-func (g *Game) GetRatTails() []int {
-	ratTails := make([]int, len(g.Players))
+func (g *Game) updateRatTails() {
 	maxScore := 0
 	for i := range g.Players {
 		if g.Players[i].Score > maxScore {
@@ -159,16 +159,16 @@ func (g *Game) GetRatTails() []int {
 		}
 	}
 	for i := range g.Players {
+		g.Players[i].RatTails = 0
 		if g.Players[i].Score < maxScore {
 			for _, ratTailLocation := range RatTailLocations {
 				if maxScore < ratTailLocation {
 					break
 				}
 				if g.Players[i].Score < ratTailLocation {
-					ratTails[i]++
+					g.Players[i].RatTails++
 				}
 			}
 		}
 	}
-	return ratTails
 }

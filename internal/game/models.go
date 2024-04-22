@@ -1,8 +1,9 @@
 package game
 
 const (
-	PhaseLobby = "lobby"
-	PhaseBrew  = "brew"
+	PhaseLobby      = "lobby"
+	PhaseBrew       = "brew"
+	PhaseEvaluation = "evaluation"
 )
 
 type Game struct {
@@ -13,19 +14,21 @@ type Game struct {
 
 type Player struct {
 	Name        string
-	Potion      []Ingredient
+	Potion      Potion
 	Bag         []Ingredient
+	Options     []Ingredient
 	Buys        [][]Ingredient
 	Score       int
 	Rubies      int
 	PotionLevel int
 	RatTails    int
 	Flask       bool
+	Done        bool
 }
 
 type Potion struct {
 	StartingSpace int
-	Ingredients   []Ingredient
+	Ingredients   []IngredientSpace
 }
 
 const (
@@ -47,6 +50,11 @@ type Ingredient struct {
 type IngredientPrice struct {
 	Ingredient
 	Price int
+}
+
+type IngredientSpace struct {
+	Ingredient
+	Space int
 }
 
 type Space = struct {

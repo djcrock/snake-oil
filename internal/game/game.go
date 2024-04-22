@@ -7,8 +7,9 @@ import (
 
 const NumRounds = 9
 const MaxPlayers = 4
+const BustThreshold = 7
 
-var GameBoard = []Space{
+var Board = []Space{
 	{Value: 0, VictoryPoints: 0},
 	{Value: 1, VictoryPoints: 0},
 	{Value: 2, VictoryPoints: 0},
@@ -142,11 +143,30 @@ func (g *Game) StartNormalBrew() error {
 	g.Phase = PhaseBrew
 	g.updateRatTails()
 	for i := range g.Players {
+		g.Players[i].Done = false
 		g.Players[i].Bag = nil
 		for _, buys := range g.Players[i].Buys {
 			g.Players[i].Bag = append(g.Players[i].Bag, buys...)
 		}
 	}
+
+	return nil
+}
+
+func (g *Game) BeginEvaluation() error {
+	if g.Phase != PhaseBrew {
+		return errors.New("invalid game status")
+	}
+	g.Phase = PhaseEvaluation
+	// Roll dice
+
+	// Resolve ingredient effects
+
+	// Award rubies
+
+	// Award victory points
+
+	// Buy
 
 	return nil
 }
@@ -158,6 +178,7 @@ func (g *Game) updateRatTails() {
 			maxScore = g.Players[i].Score
 		}
 	}
+	// TODO: what if maxScore is greater than 50?
 	for i := range g.Players {
 		g.Players[i].RatTails = 0
 		if g.Players[i].Score < maxScore {

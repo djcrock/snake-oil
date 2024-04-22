@@ -102,3 +102,84 @@ func TestGame_StartNormalBrew(t *testing.T) {
 		}
 	})
 }
+
+func TestGame_Draw(t *testing.T) {
+	t.Run("ingredients are moved from Bag to Potion", func(t *testing.T) {
+		g := Game{Phase: PhaseLobby}
+		err := g.AddPlayer("player1")
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = g.AddPlayer("player2")
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = g.Start()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(g.Players[0].Potion.Ingredients) != 0 {
+			t.Fatalf("expected potion to start with no ingredients, got %d", g.Players[0].Potion)
+		}
+		startBagLen := len(g.Players[0].Bag)
+		err = g.Draw(0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(g.Players[0].Potion.Ingredients) != 1 {
+			t.Fatalf("expected 1 potion ingredient for player1, got %v", g.Players[0].Potion)
+		}
+		if len(g.Players[0].Bag) != startBagLen-1 {
+			t.Fatalf("expected potion bag for player1 to contain %d ingredients, got %d", startBagLen-1, len(g.Players[0].Bag))
+		}
+	})
+	tests := []struct {
+		name        string
+		potion      Potion
+		bag         []Ingredient
+		expectError bool
+	}{
+		{
+			"cannot draw if busted",
+			Potion{Ingredients: []IngredientSpace{
+				{Ingredient: Ingredient{Type: White, Value: 3}},
+				{Ingredient: Ingredient{Type: White, Value: 5}},
+			}},
+			[]Ingredient{{Type: Orange, Value: 1}},
+			true,
+		},
+		{
+			"can draw if not busted",
+			Potion{Ingredients: []IngredientSpace{
+				{Ingredient: Ingredient{Type: White, Value: 3}},
+				{Ingredient: Ingredient{Type: Green, Value: 5}},
+			}},
+			[]Ingredient{{Type: Orange, Value: 1}},
+			false,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			g := Game{Phase: PhaseLobby}
+			err := g.AddPlayer("player1")
+			if err != nil {
+				t.Fatal(err)
+			}
+			err = g.AddPlayer("player2")
+			if err != nil {
+				t.Fatal(err)
+			}
+			err = g.Start()
+			if err != nil {
+				t.Fatal(err)
+			}
+			g.Players[0].Potion = test.potion
+			err = g.Draw(0)
+			if test.expectError && err == nil {
+				t.Fatal("expected error when trying to draw, but got none")
+			} else if !test.expectError && err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}

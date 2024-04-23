@@ -83,6 +83,24 @@ func (p *Player) PlaceIngredient(ingredient Ingredient) error {
 	return nil
 }
 
+func (p *Player) RollDice() {
+	roll := rand.IntN(6)
+	switch roll {
+	case 0:
+		fallthrough
+	case 1:
+		p.Score += 1
+	case 2:
+		p.Score += 2
+	case 3:
+		p.Buys[0] = append(p.Buys[0], Ingredient{Type: Orange, Value: 1})
+	case 4:
+		p.Rubies++
+	case 5:
+		p.PotionLevel++
+	}
+}
+
 func (p *Potion) IsBusted() bool {
 	whiteTotal := 0
 	for _, ingredient := range p.Ingredients {

@@ -159,6 +159,18 @@ func (g *Game) BeginEvaluation() error {
 	}
 	g.Phase = PhaseEvaluation
 	// Roll dice
+	maxPosition := 0
+	for i := range g.Players {
+		position := g.Players[i].Potion.GetNextSpace()
+		if position > maxPosition && !g.Players[i].Potion.IsBusted() {
+			maxPosition = position
+		}
+	}
+	for i := range g.Players {
+		if g.Players[i].Potion.GetNextSpace() == maxPosition && !g.Players[i].Potion.IsBusted() {
+			g.Players[i].RollDice()
+		}
+	}
 
 	// Resolve ingredient effects
 
